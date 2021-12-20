@@ -1,6 +1,8 @@
 import random, primitives
 from node import Node
 
+TARGET = None
+
 def gen_val():
 	return random.randint(1, 1000)
 
@@ -62,17 +64,33 @@ def mutate(root, prob = 0.1, depth = 3):
 	
 	return root
 
+def copy_ind(old):
+	new = Node()
+	
+	new.target = old.target
+	if old.right:
+		new.right = copy_ind(old.right)
+	if old.left:
+		new.left = copy_ind(old.left)
+	
+	return new
+
+def eval(ind):
+	val = ind.run()
+	
+	return abs(TARGET - val)
+
 if __name__ == "__main__":
 	ind = gen_ind(Node())
 	
 	ind.print_tree()
 	
-	ind = mutate(ind, prob = 0.25)
+	new = mutate(ind, prob = 0.25)
 	
 	print("After mutation:")
 	
-	ind.print_tree()
+	new.print_tree()
 	
-	print(ind.run())
+	print(new.run())
 	
 	
