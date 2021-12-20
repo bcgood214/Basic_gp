@@ -43,7 +43,8 @@ def get_children(nodes):
 	return new_nodes
 
 def mutate(root, prob = 0.1, depth = 3):
-	options = [root]
+	clone = copy_ind(root)
+	options = [clone]
 	choice = None
 	
 	while len(options) > 0:
@@ -58,11 +59,16 @@ def mutate(root, prob = 0.1, depth = 3):
 		
 		options = get_children(options)
 	
+	
+	
 	if choice is not None:
 		d = random.randint(0, depth)
-		choice.right = gen_ind(Node(), d)
+		if random.random() > 0.5:
+			choice.right = gen_ind(Node(), d)
+		else:
+			choice.left = gen_ind(Node(), d)
 	
-	return root
+	return clone
 
 def copy_ind(old):
 	new = Node()
@@ -80,17 +86,29 @@ def eval(ind):
 	
 	return abs(TARGET - val)
 
+def run(gens = 50, init_depth = 3, prob = 0.1):
+	base = gen_ind(Node(), init_depth)
+	print(base.run())
+	
+	for i in range(gens):
+		d = random.randint(0, init_depth)
+		mutant = mutate(base, prob, d)
+		
+		base_val = eval(base)
+		mut_val = eval(mutant)
+		
+		if mut_val < base_val:
+			base = mutant
+	
+	return base
+
 if __name__ == "__main__":
-	ind = gen_ind(Node())
+	userin = input("Enter a target number: ")
 	
-	ind.print_tree()
+	TARGET = int(userin)
 	
-	new = mutate(ind, prob = 0.25)
+	result = run()
 	
-	print("After mutation:")
-	
-	new.print_tree()
-	
-	print(new.run())
+	print(result.run())
 	
 	
